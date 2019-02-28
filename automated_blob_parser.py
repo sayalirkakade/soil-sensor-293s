@@ -15,7 +15,7 @@ from azure.cosmosdb.table.models import Entity
 
 # ------------ GLOBAL CONSTANTS ------------------------------------------
 # FULL filepath to file storing the last blob that was processed and uploaded.
-filename = "~/cs293s/soil-sensor-293s/last_blob_processed.txt"
+filename = "/fs/student/sayalikakade/cs293s/soil-sensor-293s"
 
 
 def run_parsing_pipeline():
