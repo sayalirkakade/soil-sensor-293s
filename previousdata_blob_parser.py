@@ -14,7 +14,8 @@ from azure.storage.blob import BlockBlobService
 from azure.cosmosdb.table.tableservice import TableService
 from azure.cosmosdb.table.models import Entity
 
-def run_parsing_pipeline():
+
+def run_first_parsing_pipeline(darksky_data):
     try:
         block_blob_service = BlockBlobService(account_name='soilhumiditydata293s', account_key='4PSsEO1xBAIdq3/MppWm+t6eYHi+CWhVn6xNZ6i4mLVgm50K8+NK6lA94v8MxG0bvVEfYCvsv1suxCyCnUYd0A==')
         table_service = TableService(account_name='soilhumiditydata293s', account_key='4PSsEO1xBAIdq3/MppWm+t6eYHi+CWhVn6xNZ6i4mLVgm50K8+NK6lA94v8MxG0bvVEfYCvsv1suxCyCnUYd0A==')
@@ -38,7 +39,7 @@ def run_parsing_pipeline():
         entities_created = []
         data_point_counter = 0
 
-        # Loop through blobs - run interpolation and upload everytime we are in a new hour of the day.
+        # Loop through blobs - run interpolation and upload every time we are in a new hour of the day.
         for blob in sensor_blob_list[starting_index:]:
             print("Currently processing blob: " + blob.name)
             blob_minute = blob.name[-2]
@@ -56,12 +57,28 @@ def run_parsing_pipeline():
                 data_point_counter += 1
 
             # If our blob is in 58 or 59 minute, run interpolation and upload values for the past hour.
-            if blob_minute == "58" or blob_minute == "59":
-                blob_hour = int(blob.name[-5:-2])
-                starting_interpolation_data = get_past_darksky_readings(datetime.datetime(2019, 2, blob_hour))
+            if blob_minute == '58' or blob_minute == '59':
+                blob_datetime = blob.properties.creation_time
+                previous_datetime = blob_datetime - datetime.timedelta(hours=1)
+                starting_interpolation_data = get_past_darksky_readings(datetime.datetime(
+                    previous_datetime.year, previous_datetime.month, previous_datetime.day))
+                ending_interpolation_data = get_past_darksky_readings(datetime.datetime(
+                    blob_datetime.year, blob_datetime.month, blob_datetime.day))
+
+                interpolation_data = linear_interpolation(
+                    starting_interpolation_data, ending_interpolation_data, data_point_counter)
 
                 for day in range(len(past_data)):
                     print(str(day) + ": " + str(past_data[day]))
+
+                # Upload hourly entites.
+                index = 0
+                for e in entities_created:
+                    for data in interpolation_data[index]:
+                        if data is not 'time':
+                            e[data] = interpolation_data[index].get(data)
+                    table_service.insert_entity(table_name, e)
+                    index += 1
 
                 # Reset counters.
                 data_point_counter = 0
@@ -135,4 +152,12 @@ def get_past_darksky_readings(d):
 
 
 if __name__ == '__main__':
-    run_parsing_pipeline()
+    print("Running parsing for soil moisture data from soil-mosture-hub/02/2019/02/21/00/00 to \n"
+          "soil-mosture-hub/02/2019/02/26/06/57.")
+    print("Collecting dark sky data from Feb 21 to Feb 26.")
+    darksky_data_first_batch = []
+    for date in range(21, 27):
+        darksky_data_first_batch.append(get_past_darksky_readings(datetime.datetime(2019, 2, date)))
+
+    print("Uploading first batch of data to table.")
+    run_first_parsing_pipeline(darksky_data_first_batch)
