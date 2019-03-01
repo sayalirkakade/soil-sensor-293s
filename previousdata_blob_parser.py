@@ -21,7 +21,7 @@ def run_first_parsing_pipeline(darksky_data):
         table_service = TableService(account_name='soilhumiditydata293s', account_key='4PSsEO1xBAIdq3/MppWm+t6eYHi+CWhVn6xNZ6i4mLVgm50K8+NK6lA94v8MxG0bvVEfYCvsv1suxCyCnUYd0A==')
 
         container_name = "soilmoisturemessages"
-        table_name = "trainingDataPastSoilMoistureMessages"
+        table_name = "trainingDataPastSoilMoistureMessagesV2"
 
         # First, collect data from the old soil moisture hub blobs.
         sensor_blob_list = block_blob_service.list_blobs(container_name, prefix='soil-mosture-hub')
