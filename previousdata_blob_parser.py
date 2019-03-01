@@ -37,13 +37,13 @@ def run_first_parsing_pipeline(darksky_data):
                 break
 
         entities_created = []
-        interpolated_data = []
+        interpolated_data = {}
         data_point_counter = 0
 
         # Loop through blobs - run interpolation and upload every time we are in a new hour of the day.
         for blob in sensor_blob_list[starting_index:]:
             print("Currently processing blob: " + blob.name)
-            blob_minute = blob.name[-2]
+            blob_minute = blob.name[-2:]
             blob_content = block_blob_service.get_blob_to_text(container_name, blob.name, encoding='latin-1').content
 
             next_temp = 0
@@ -59,28 +59,37 @@ def run_first_parsing_pipeline(darksky_data):
 
             # If our blob is in 58 or 59 minute, run interpolation and upload values for the past hour.
             if blob_minute == '58' or blob_minute == '59':
+                print("Reached end of hour: " + blob.name)
                 blob_hour = int(blob.name[-5:-3])
                 blob_date = int(blob.name[-8:-6])
 
                 current_hour = blob_hour + 1 if blob_hour != 23 else 0
                 current_date = blob_date if blob_hour != 23 else blob_date + 1
-                current_dark_sky_data = darksky_data[current_date][current_hour]
-                past_dark_sky_data = darksky_data[blob_date][blob_hour]
+                current_dark_sky_data = darksky_data[datetime.datetime(2019, 2, current_date, current_hour)]
+                past_dark_sky_data = darksky_data[datetime.datetime(2019, 2, blob_date, blob_hour)]
 
+                print(past_dark_sky_data)
+                print(current_dark_sky_data)
+
+                print("Interpolating")
                 for data in past_dark_sky_data:
                     if data is not 'time':
                         starting_value = past_dark_sky_data[data]
                         ending_value = current_dark_sky_data[data]
-                        delta = (ending_value - starting_value) / data_point_counter  # Make sure to maintain doubles
+                        print(starting_value)
+                        print(ending_value)
+                        print(data)
+                        delta = (ending_value - starting_value) / data_point_counter
                         interpolated_data[data] = []
                         for i in range(data_point_counter):
                             interpolated_data[data].append(starting_value + (i * delta))
 
                 # Upload entities.
+                print("Uploading")
                 for x in range(data_point_counter):
                     e = entities_created[x]
                     for data in interpolated_data:
-                        e[data] = interpolated_data[data][x]
+                        e[data] = interpolated_data.get(data)[x]
                     table_service.insert_entity(table_name, e)
 
                 print("Entities inserted: {}".format(len(entities_created)))
@@ -88,7 +97,7 @@ def run_first_parsing_pipeline(darksky_data):
                 # Reset counters.
                 data_point_counter = 0
                 entities_created = []
-                interpolated_data = []
+                interpolated_data = {}
 
     except Exception as e:
         print(e)
@@ -151,9 +160,11 @@ if __name__ == '__main__':
     print("Running parsing for soil moisture data from soil-mosture-hub/02/2019/02/21/00/00 to \n"
           "soil-mosture-hub/02/2019/02/26/06/57.")
     print("Collecting dark sky data from Feb 21 to Feb 26.")
-    darksky_data_first_batch = []
-    for date in range(21, 28):
-        darksky_data_first_batch.append(get_past_darksky_readings(datetime.datetime(2019, 2, date)))
+    darksky_data_first_batch = {}
+    for date in range(20, 27):
+        darksky_reading = get_past_darksky_readings(datetime.datetime(2019, 2, date))
+        for hourly_data in darksky_reading:
+            darksky_data_first_batch[hourly_data['time']] = hourly_data
 
     print("Uploading first batch of data to table.")
     run_first_parsing_pipeline(darksky_data_first_batch)
