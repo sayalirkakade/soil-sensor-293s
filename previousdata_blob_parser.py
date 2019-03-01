@@ -37,6 +37,7 @@ def run_first_parsing_pipeline(darksky_data):
                 break
 
         entities_created = []
+        interpolated_data = []
         data_point_counter = 0
 
         # Loop through blobs - run interpolation and upload every time we are in a new hour of the day.
@@ -58,41 +59,36 @@ def run_first_parsing_pipeline(darksky_data):
 
             # If our blob is in 58 or 59 minute, run interpolation and upload values for the past hour.
             if blob_minute == '58' or blob_minute == '59':
-                blob_datetime = blob.properties.creation_time
-                previous_datetime = blob_datetime - datetime.timedelta(hours=1)
-                starting_interpolation_data = get_past_darksky_readings(datetime.datetime(
-                    previous_datetime.year, previous_datetime.month, previous_datetime.day))
-                ending_interpolation_data = get_past_darksky_readings(datetime.datetime(
-                    blob_datetime.year, blob_datetime.month, blob_datetime.day))
+                blob_hour = int(blob.name[-5:-3])
+                blob_date = int(blob.name[-8:-6])
 
-                interpolation_data = linear_interpolation(
-                    starting_interpolation_data, ending_interpolation_data, data_point_counter)
+                current_hour = blob_hour + 1 if blob_hour != 23 else 0
+                current_date = blob_date if blob_hour != 23 else blob_date + 1
+                current_dark_sky_data = darksky_data[current_date][current_hour]
+                past_dark_sky_data = darksky_data[blob_date][blob_hour]
 
-                for day in range(len(past_data)):
-                    print(str(day) + ": " + str(past_data[day]))
+                for data in past_dark_sky_data:
+                    if data is not 'time':
+                        starting_value = past_dark_sky_data[data]
+                        ending_value = current_dark_sky_data[data]
+                        delta = (ending_value - starting_value) / data_point_counter  # Make sure to maintain doubles
+                        interpolated_data[data] = []
+                        for i in range(data_point_counter):
+                            interpolated_data[data].append(starting_value + (i * delta))
 
-                # Upload hourly entites.
-                index = 0
-                for e in entities_created:
-                    for data in interpolation_data[index]:
-                        if data is not 'time':
-                            e[data] = interpolation_data[index].get(data)
+                # Upload entities.
+                for x in range(data_point_counter):
+                    e = entities_created[x]
+                    for data in interpolated_data:
+                        e[data] = interpolated_data[data][x]
                     table_service.insert_entity(table_name, e)
-                    index += 1
+
+                print("Entities inserted: {}".format(len(entities_created)))
 
                 # Reset counters.
                 data_point_counter = 0
                 entities_created = []
-
-        #
-        # # Upload all the new entities.
-        # for e in entities_created:
-        #     for data in dark_sky_current_reading:
-        #         if data is not 'time':
-        #             e[data] = dark_sky_current_reading.get(data)
-        #     table_service.insert_entity(table_name, e)
-        #
-        # print("Entities written: {}".format(len(entities_created)))
+                interpolated_data = []
 
     except Exception as e:
         print(e)
@@ -156,7 +152,7 @@ if __name__ == '__main__':
           "soil-mosture-hub/02/2019/02/26/06/57.")
     print("Collecting dark sky data from Feb 21 to Feb 26.")
     darksky_data_first_batch = []
-    for date in range(21, 27):
+    for date in range(21, 28):
         darksky_data_first_batch.append(get_past_darksky_readings(datetime.datetime(2019, 2, date)))
 
     print("Uploading first batch of data to table.")
