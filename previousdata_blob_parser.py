@@ -53,7 +53,7 @@ def run_first_parsing_pipeline(darksky_data):
                 new_entity.PartitionKey = datetime.datetime.strftime(blob.properties.creation_time, "%Y%m%d")
                 next_temp = integrate_localsensor_data(new_entity, blob_content)
                 new_entity.RowKey = datetime.datetime.strftime(blob.properties.creation_time, "%H%M") \
-                                    + new_entity.get('messageId').zfill(2)
+                                    + new_entity.get('messageIdLocal').zfill(2)
                 entities_created.append(new_entity)
                 data_point_counter += 1
 
@@ -108,7 +108,7 @@ def integrate_localsensor_data(entity_object, blob_content):
             key_string = str[0:-1]
         else:
             end_index = blob_content.find(',', start_index)
-            key_string = str[1:-2]
+            key_string = str[1:-2] + "Local"
         sensor_val = blob_content[start_index: end_index]
         entity_object[key_string] = sensor_val
 
