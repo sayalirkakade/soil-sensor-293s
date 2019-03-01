@@ -68,24 +68,18 @@ def run_first_parsing_pipeline(darksky_data):
                 current_dark_sky_data = darksky_data[datetime.datetime(2019, 2, current_date, current_hour)]
                 past_dark_sky_data = darksky_data[datetime.datetime(2019, 2, blob_date, blob_hour)]
 
-                print(past_dark_sky_data)
-                print(current_dark_sky_data)
-
-                print("Interpolating")
+                print("Interpolating for current hour batch...")
                 for data in past_dark_sky_data:
-                    if data is not 'time':
+                    if str(data) != "time":
                         starting_value = past_dark_sky_data[data]
                         ending_value = current_dark_sky_data[data]
-                        print(starting_value)
-                        print(ending_value)
-                        print(data)
                         delta = (ending_value - starting_value) / data_point_counter
                         interpolated_data[data] = []
                         for i in range(data_point_counter):
                             interpolated_data[data].append(starting_value + (i * delta))
 
                 # Upload entities.
-                print("Uploading")
+                print("Uploading for current hour batch...")
                 for x in range(data_point_counter):
                     e = entities_created[x]
                     for data in interpolated_data:
