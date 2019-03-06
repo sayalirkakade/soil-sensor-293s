@@ -59,11 +59,11 @@
 							<article id="mode_one">
 								<h2 class="major">Prediction Mode</h2>
 								<h3>Current Soil Moisture Conditions & Forecast</h3>
-								<p>The following graph shows the current soil moisture reading and predicted soil moisture values over the next 24 hours for our local plant set up in Goleta, California. The predictions are based on the analysis of weather forecast data from the Dark Sky API and local sensor data (humidity, soil moisture, temperature). Information about the sensor set up, data collection, and analysis process is described extensively <a href="#intro">here</a>. </p>
+								<p>The following graph shows the current soil moisture reading and predicted soil moisture values over the next 24 hours for our local plant set up in Goleta, California. The sensor set up, data collection, and analysis process used to calculate the predictions is described extensively <a href="#intro">here</a>. </p>
 								<div id="chartdiv"></div>
 								<br></br>
 								<h3>Soil Moisture Predictions After Watering</h3>
-								<p>To predict future soil moisture levels after watering your plant at a certain time, fill out the information in the following form as described and hit the submit button to generate the 24 hour prediction graph. </p>
+								<p>To predict future soil moisture levels after watering your plant at a certain time, fill out the information in the following form as described and hit the submit button. </p>
 								<form action="javascript:alert('Hello there, I am being submitted');">
 									<div class="fields">
 										<div class="field half">
@@ -410,82 +410,53 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 
 				// Import data from Azure table and export to chart data
 				var tableUri = 'https://soilhumiditydata293s.table.core.windows.net';
-				var tableService = AzureStorage.Table.createTableServiceWithSas(tableUri, '?sv=2018-03-28&ss=bfqt&srt=sco&sp=rwdlacup&se=2019-03-05T12:55:11Z&st=2019-03-05T04:55:11Z&spr=https&sig=aJA2KQ6KM6lymM5NeafsqlPerGvUqI5Z%2B2fNxfPNOdc%3D');
-
-				var chartData = []
-
+				var tableService = AzureStorage.Table.createTableServiceWithSas(tableUri, '?sv=2018-03-28&ss=bfqt&srt=sco&sp=rwdlacup&se=2019-03-06T10:50:56Z&st=2019-03-06T02:50:56Z&spr=https&sig=iV4OOk%2B3V3iOmFiazUsyNuMf8CUOGbAta0wMWFHnO3U%3D');
+				
+				var chartData = [];
 				var tableQuery = new AzureStorage.Table.TableQuery().top(200);
 				tableService.queryEntities('predictedSoilMoistureMessages', tableQuery, null, function (error, results) {
-				    if (error) {
-				        // Query entities error
-				    } else {
-				        for (var i = 0, entity; entity = results.entries[i]; i++) {
-				            var date = new Date(entity.PartitionKey._)
-				            chartData.push({
-				            	Date: date,
-				            	Moisture: parseInt(entity.soilmoistureprediction._)
-				            });
-				        }
-				    }
+					if (!error) {
+						for (var i = 0, entity; entity = results.entries[i]; i++) {
+							var date = new Date(entity.PartitionKey._);
+							chartData.push({
+								date: date,
+								moisture: parseInt((entity.soilmoistureprediction._/6.5))
+							});
+						}
+					}
+					chart.data = chartData;
+					var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+					dateAxis.baseInterval = {
+					  "timeUnit": "hour",
+					  "count": 1
+					};
+					dateAxis.tooltipDateFormat = "HH:mm, d MMMM";
+					dateAxis.renderer.labels.template.fill = am4core.color("#A0CA92");
+
+					var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+					valueAxis.renderer.labels.template.fill = am4core.color("#A0CA92");
+					valueAxis.tooltip.disabled = true;
+					valueAxis.title.fill = am4core.color("#A0CA92");
+					valueAxis.title.text = "Soil Moisture";
+
+					var series = chart.series.push(new am4charts.LineSeries());
+					series.dataFields.dateX = "date";
+					series.dataFields.valueY = "moisture";
+					series.tooltipText = "Moisture: [bold]{valueY}[/]";
+					series.fillOpacity = 0.3;
+
+					chart.cursor = new am4charts.XYCursor();
+					chart.cursor.lineY.opacity = 0;
+					chart.scrollbarX = new am4charts.XYChartScrollbar();
+					chart.scrollbarX.series.push(series);
+
+					chart.events.on("datavalidated", function () {
+						dateAxis.zoom({start:0.8, end:1});
+					});
 				});
-
-				chart.data = chartData;
-
-				// console.log(chartData);
-				// console.log(generateChartData());
-
-				// function generateChartData() {
-				//     var chartData = [];
-				//     // current date
-				//     var firstDate = new Date();
-				//     // now set 500 minutes back
-				//     firstDate.setMinutes(firstDate.getDate() - 500);
-
-				//     // and generate 500 data items
-				//     var visits = 500;
-				//     for (var i = 0; i < 500; i++) {
-				//         var newDate = new Date(firstDate);
-				//         // each time we add one minute
-				//         newDate.setMinutes(newDate.getMinutes() + i);
-				//         // some random number
-				//         visits += Math.round((Math.random()<0.5?1:-1)*Math.random()*10);
-				//         // add data item to the array
-				//         chartData.push({
-				//             date: newDate,
-				//             visits: visits
-				//         });
-				//     }
-				//     return chartData;
-				// }
 				
-				var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-				dateAxis.baseInterval = {
-				  "timeUnit": "hour",
-				  "count": 1
-				};
-				dateAxis.tooltipDateFormat = "HH:mm, d MMMM";
-
-				var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-				valueAxis.tooltip.disabled = true;
-				valueAxis.title.text = "Soil Moisture";
-
-				var series = chart.series.push(new am4charts.LineSeries());
-				series.dataFields.dateX = "Date";
-				series.dataFields.valueY = "Moisture";
-				series.tooltipText = "Moisture: [bold]{valueY}[/]";
-				series.fillOpacity = 0.3;
-
-
-				chart.cursor = new am4charts.XYCursor();
-				chart.cursor.lineY.opacity = 0;
-				chart.scrollbarX = new am4charts.XYChartScrollbar();
-				chart.scrollbarX.series.push(series);
-
-
-				chart.events.on("datavalidated", function () {
-				    dateAxis.zoom({start:0.8, end:1});
-				});
 			</script>
+			
 			<script>
 			  function myFunction() {
 			  	var x = document.getElementById("chartdiv");
