@@ -32,10 +32,9 @@
 						<nav>
 							<ul>
 								<li><a href="#intro">Setup</a></li>
-								<li><a href="#mode_one">Mode One</a></li>
-								<li><a href="#mode_two">Mode Two</a></li>
+								<li><a href="#mode_one">Predict</a></li>
 								<li><a href="#contact">About</a></li>
-								<li><a href="#elements">Elements</a></li>
+<!-- 								<li><a href="#elements">Elements</a></li> -->
 							</ul>
 						</nav>
 					</header>
@@ -46,46 +45,57 @@
 						<!-- Intro -->
 							<article id="intro">
 								<h2 class="major">Project Setup</h2>
+								<p>Setting up the soil sensor project consisted of three main parts: the hardware setup involving the local sensors, the software setup to collect weather forecast and local sensor data, and finally the analysis of the data </p>
 								<span class="image main"><img src="images/pic01.jpg" alt="" /></span>
 								<p>Aenean ornare velit lacus, ac varius enim ullamcorper eu. Proin aliquam facilisis ante interdum congue. Integer mollis, nisl amet convallis, porttitor magna ullamcorper, amet egestas mauris. Ut magna finibus nisi nec lacinia. Nam maximus erat id euismod egestas. By the way, check out my <a href="#mode_one">awesome work</a>.</p>
 								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque aliquam maximus risus, vel sed vehicula.</p>
 								<h3 class="major">Hardware Setup</h3>
 								<h3 class="major">Software Setup</h3>
 								<h3 class="major">Usage</h3>
+								<!-- LINK TO THE GITHUB WITH PRESENTATION HERE -->
 							</article>
 
 						<!-- Prediction Mode One -->
 							<article id="mode_one">
-								<h2 class="major">Prediction Mode 1</h2>
-								<form method="post" action="#">
+								<h2 class="major">Prediction Mode</h2>
+								<h3>Current Soil Moisture Conditions & Forecast</h3>
+								<p>The following graph shows the current soil moisture reading and predicted soil moisture values over the next 24 hours for our local plant set up in Goleta, California. The predictions are based on the analysis of weather forecast data from the Dark Sky API and local sensor data (humidity, soil moisture, temperature). Information about the sensor set up, data collection, and analysis process is described extensively <a href="#intro">here</a>. </p>
+								<div id="chartdiv"></div>
+								<br></br>
+								<h3>Soil Moisture Predictions After Watering</h3>
+								<p>To predict future soil moisture levels after watering your plant at a certain time, fill out the information in the following form as described and hit the submit button to generate the 24 hour prediction graph. </p>
+								<form action="javascript:alert('Hello there, I am being submitted');">
 									<div class="fields">
 										<div class="field half">
-											<label for="waterAmount">Water Amount</label>
-											<input type="text" name="waterAmount" id="waterAmount" />
+											<label for="waterAmount">Water Amount (in cups)</label>
+											<input type="number" name="waterAmount" id="waterAmount" />
 										</div>
 										<div class="field half">
-											<label for="potSize">potSize</label>
-											<select name="potSize" id="potSize">
-											    <option value="1L">1L</option> <!-- change values here before submission code -->
-   												<option value="2L">2L</option>
-    											<option value="3L">3L</option>
-    											<option value="4L">4L</option>
-											</select>
+											<label for="potHeight">Pot Height (centimeters)</label>
+											<input type="number" name="potHeight" id="potHeight" />
+										</div>
+										<div class="field half">
+											<label for="potDiameter">Pot Diameter (centimeters)</label>
+											<input type="number" name="potDiameter" id="potDiameter" />
+										</div>
+										<div class="field half">
+											<label for="potBaseDiameter">Pot Base Diameter (cm)</label>
+											<input type="number" name="potBaseDiameter" id="potBaseDiameter" />
 										</div>
 										<div class="field half">
 											<label for="plantType">Plant Type</label>
 											<select name="plantType" id="plantType">
-											    <option value="cactus">Cactus</option> <!-- change values here before submission code -->
+											    <option value="cactus">Cactus</option> 
    												<option value="succulent">Succulent</option>
-    											<option value="other">Other</option>
+    											<option value="flowers">Flower</option>
+    											<option value="vegetable">Vegetable</option> 
+   												<option value="fruit">Fruit</option>
+    											<option value="treeShrub">Tree or Shrub</option>
 											</select>
 										</div>
 										<div class="field half">
 											<label for="timeDay">Time of Day</label>
-											<select name="plantType" id="plantType">
-											    <option value="cactus">Cactus</option> <!-- change values here before submission code -->
-   												<option value="succulent">Succulent</option>
-    											<option value="other">Other</option>
+											<input type="time" name="timeDay" id="timeDay" />
 											</select>
 										</div>
 									</div>
@@ -94,49 +104,26 @@
 										<li><input type="reset" value="Reset" /></li>
 									</ul>
 								</form>
-								<span class="image main"><img src="images/pic02.jpg" alt="" /></span>
-								<button onclick="myFunction()">Submit form values!</button>
-								<div id="chartdiv"></div>
-								<p>Adipiscing magna sed dolor elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices.</p>
-								<p>Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus pharetra. Pellentesque condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor. Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis libero. Mauris aliquet magna magna sed nunc rhoncus amet feugiat tempus.</p>
-							</article>
-
-						<!-- Prediction Mode Two -->
-							<article id="mode_two">
-								<h2 class="major">Prediction Mode 2</h2>
-								<span class="image main"><img src="images/pic03.jpg" alt="" /></span>
-								<p>Lorem ipsum dolor sit amet, consectetur et adipiscing elit. Praesent eleifend dignissim arcu, at eleifend sapien imperdiet ac. Aliquam erat volutpat. Praesent urna nisi, fringila lorem et vehicula lacinia quam. Integer sollicitudin mauris nec lorem luctus ultrices. Aliquam libero et malesuada fames ac ante ipsum primis in faucibus. Cras viverra ligula sit amet ex mollis mattis lorem ipsum dolor sit amet.</p>
+<!-- 								<button onclick="myFunction()">Submit form values!</button> -->
 							</article>
 
 						<!-- Contact -->
 							<article id="contact">
-								<h2 class="major">About</h2>
-								<form method="post" action="#">
-									<div class="fields">
-										<div class="field half">
-											<label for="name">Name</label>
-											<input type="text" name="name" id="name" />
-										</div>
-										<div class="field half">
-											<label for="email">Email</label>
-											<input type="text" name="email" id="email" />
-										</div>
-										<div class="field">
-											<label for="message">Message</label>
-											<textarea name="message" id="message" rows="4"></textarea>
-										</div>
+								<h2 class="major">About Us</h2>
+								<div class="image row">
+  									<div class="image column">
+    									<img src="images/chowdhury.jpg" alt="" style="width:100%" id="chowdhury">
+  									</div>
+									<div class="image column">
+										<img src="images/kakade.jpg" alt="" style="width:100%" id="kakade">
 									</div>
-									<ul class="actions">
-										<li><input type="submit" value="Send Message" class="primary" /></li>
-										<li><input type="reset" value="Reset" /></li>
-									</ul>
-								</form>
-								<ul class="icons">
-									<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-									<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
-									<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
-									<li><a href="#" class="icon fa-github"><span class="label">GitHub</span></a></li>
-								</ul>
+									<div class="image column">
+										<img src="images/wadaskar.jpg" alt="" style="width:100%" id="wadaskar">
+									</div>
+								</div>
+								<br></br>
+								<p>Hi! We are Himangshu Chowdhury (5th year BS/MS), Sayali Kakade (4th year BS), and Aditya Wadaskar (4th year BS). All of us are computer engineering students at UCSB. Soil Smart was developed as our final project for our class CMPSC 293s Internet of Things during Winter 2019. </p>
+								<p>For any further questions or comments, feel free to contact us at himangshuchowdhury@ucsb.edu, sayalikakade@ucsb.edu, or aditya_wadaskar@ucsb.edu respectively.</p>
 							</article>
 
 						<!-- Elements -->

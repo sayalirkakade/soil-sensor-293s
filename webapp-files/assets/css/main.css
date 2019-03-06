@@ -389,6 +389,8 @@ input, select, textarea {
 	input[type="password"],
 	input[type="email"],
 	input[type="tel"],
+	input[type="number"],
+	input[type="time"],
 	select,
 	textarea {
 		-moz-appearance: none;
@@ -414,6 +416,8 @@ input, select, textarea {
 		input[type="password"]:invalid,
 		input[type="email"]:invalid,
 		input[type="tel"]:invalid,
+		input[type="number"]:invalid,
+		input[type="time"]:invalid,
 		select:invalid,
 		textarea:invalid {
 			box-shadow: none;
@@ -423,6 +427,8 @@ input, select, textarea {
 		input[type="password"]:focus,
 		input[type="email"]:focus,
 		input[type="tel"]:focus,
+		input[type="number"]:focus,
+		input[type="time"]:focus,
 		select:focus,
 		textarea:focus {
 			background: rgba(255, 255, 255, 0.075);
@@ -456,6 +462,8 @@ input, select, textarea {
 	input[type="text"],
 	input[type="password"],
 	input[type="email"],
+	input[type="number"],
+	input[type="time"],
 	select {
 		height: 2.75rem;
 	}
@@ -683,6 +691,20 @@ input, select, textarea {
 			.image.main img {
 				width: 100%;
 			}
+			
+		/* Three image containers (use 25% for four, and 50% for two, etc) */
+		.image.column {
+  			float: left;
+  			width: 33.33%;
+  			padding: 5px;
+		}
+
+		/* Clear floats after image containers */
+		.image.row::after {
+  			content: "";
+  			clear: both;
+  			display: table;
+		}
 
 		@media screen and (max-width: 736px) {
 
