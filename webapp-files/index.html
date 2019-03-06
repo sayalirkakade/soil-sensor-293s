@@ -104,6 +104,9 @@
 										<li><input type="reset" value="Reset" /></li>
 									</ul>
 								</form>
+								<div id="prescriptiveText" style="display: none">
+									<p>Your soil moisture level is in the ideal moisture level range.</p>
+								</div>
 								<div id="predictionchartdiv" style="display: none">
 								</div>
 							</article>
@@ -478,12 +481,15 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 
 				function myFunction(formdata) {
 				  	document.getElementById("predictionchartdiv").style.display = "block";
+				  	document.getElementById("prescriptiveText").style.display = "block";
 				  	var potHeight = formdata.elements[0].value;
 				  	var potDia = formdata.elements[1].value;
 				  	var potBaseDia = formdata.elements[2].value;
 				  	var plant = formdata.elements[3].value;
 				  	var water = formdata.elements[4].value;
 				  	var timeOfDay = formdata.elements[5].value;
+				  	
+
 				  	// console.log(potHeight);
 				  	// console.log(potDia);
 				  	// console.log(potBaseDia);
