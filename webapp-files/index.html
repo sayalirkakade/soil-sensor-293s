@@ -68,19 +68,19 @@
 									<div class="fields">
 										<div class="field half">
 											<label for="waterAmount">Water Amount (in cups)</label>
-											<input type="number" name="waterAmount" id="waterAmount" />
+											<input type="number" name="waterAmount" min= "0" id="waterAmount" />
 										</div>
 										<div class="field half">
 											<label for="potHeight">Pot Height (centimeters)</label>
-											<input type="number" name="potHeight" id="potHeight" />
+											<input type="number" name="potHeight" min="0" id="potHeight" />
 										</div>
 										<div class="field half">
 											<label for="potDiameter">Pot Diameter (centimeters)</label>
-											<input type="number" name="potDiameter" id="potDiameter" />
+											<input type="number" name="potDiameter" min="0" id="potDiameter" />
 										</div>
 										<div class="field half">
 											<label for="potBaseDiameter">Pot Base Diameter (cm)</label>
-											<input type="number" name="potBaseDiameter" id="potBaseDiameter" />
+											<input type="number" name="potBaseDiameter" min="0"id="potBaseDiameter" />
 										</div>
 										<div class="field half">
 											<label for="plantType">Plant Type</label>
@@ -411,7 +411,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 
 				// Import data from Azure table and export to chart data
 				var tableUri = 'https://soilhumiditydata293s.table.core.windows.net';
-				var tableService = AzureStorage.Table.createTableServiceWithSas(tableUri, '?sv=2018-03-28&ss=bfqt&srt=sco&sp=rwdlacup&se=2019-03-06T10:50:56Z&st=2019-03-06T02:50:56Z&spr=https&sig=iV4OOk%2B3V3iOmFiazUsyNuMf8CUOGbAta0wMWFHnO3U%3D');
+				var tableService = AzureStorage.Table.createTableServiceWithSas(tableUri, '?sv=2018-03-28&ss=bfqt&srt=sco&sp=rwdlacup&se=2019-04-02T00:46:15Z&st=2019-03-06T17:46:15Z&spr=https&sig=%2BO%2BdmclRL08EjYWTw29lzwq4VRY5A0G5u1%2FajYXJ64c%3D');
 				
 				var chartData = [];
 				var tableQuery = new AzureStorage.Table.TableQuery().top(200);
