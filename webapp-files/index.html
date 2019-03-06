@@ -64,7 +64,7 @@
 								<br></br>
 								<h3>Soil Moisture Predictions After Watering</h3>
 								<p>To predict future soil moisture levels after watering your plant at a certain time, fill out the information in the following form as described and hit the submit button. </p>
-								<form action="javascript:alert('Hello there, I am being submitted');">
+								<form action="javascript:;" onsubmit="myFunction(this)">
 									<div class="fields">
 										<div class="field half">
 											<label for="waterAmount">Water Amount (in cups)</label>
@@ -104,7 +104,8 @@
 										<li><input type="reset" value="Reset" /></li>
 									</ul>
 								</form>
-<!-- 								<button onclick="myFunction()">Submit form values!</button> -->
+								<div class="predictionChartDiv" style="display: none">
+								</div>
 							</article>
 
 						<!-- Contact -->
@@ -437,7 +438,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 					valueAxis.renderer.labels.template.fill = am4core.color("#A0CA92");
 					valueAxis.tooltip.disabled = true;
 					valueAxis.title.fill = am4core.color("#A0CA92");
-					valueAxis.title.text = "Soil Moisture";
+					valueAxis.title.text = "Soil Moisture Percentage";
 
 					var series = chart.series.push(new am4charts.LineSeries());
 					series.dataFields.dateX = "date";
@@ -458,13 +459,64 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 			</script>
 			
 			<script>
-			  function myFunction() {
-			  	var x = document.getElementById("chartdiv");
-			  	if (x.style.display === "none") {
-			  		x.style.display = "block";
-			  	} else {
-			  		x.style.display = "none";
-			  	}
+			  function myFunction(formdata) {
+			  	document.getElementById("predictionChartDiv").style.display = "block";
+			  	console.log("reached function"); 
+// 			  	
+// 			  	// Themes begin
+// 				am4core.useTheme(am4themes_animated);
+// 				// Themes end
+// 
+// 				// Create chart instance
+// 				var chart = am4core.create("predictionChartDiv", am4charts.XYChart);
+// 				chart.paddingRight = 20;
+// 
+// 				// Import data from Azure table and export to chart data
+// 				var tableUri = 'https://soilhumiditydata293s.table.core.windows.net';
+// 				var tableService = AzureStorage.Table.createTableServiceWithSas(tableUri, '?sv=2018-03-28&ss=bfqt&srt=sco&sp=rwdlacup&se=2019-03-06T10:50:56Z&st=2019-03-06T02:50:56Z&spr=https&sig=iV4OOk%2B3V3iOmFiazUsyNuMf8CUOGbAta0wMWFHnO3U%3D');
+// 				
+// 				var chartData = [];
+// 				var tableQuery = new AzureStorage.Table.TableQuery().top(200);
+// 				tableService.queryEntities('predictedSoilMoistureMessages', tableQuery, null, function (error, results) {
+// 					if (!error) {
+// 						for (var i = 0, entity; entity = results.entries[i]; i++) {
+// 							var date = new Date(entity.PartitionKey._);
+// 							chartData.push({
+// 								date: date,
+// 								moisture: parseInt((entity.soilmoistureprediction._/6.5))
+// 							});
+// 						}
+// 					}
+// 					chart.data = chartData;
+// 					var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+// 					dateAxis.baseInterval = {
+// 					  "timeUnit": "hour",
+// 					  "count": 1
+// 					};
+// 					dateAxis.tooltipDateFormat = "HH:mm, d MMMM";
+// 					dateAxis.renderer.labels.template.fill = am4core.color("#A0CA92");
+// 
+// 					var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+// 					valueAxis.renderer.labels.template.fill = am4core.color("#A0CA92");
+// 					valueAxis.tooltip.disabled = true;
+// 					valueAxis.title.fill = am4core.color("#A0CA92");
+// 					valueAxis.title.text = "Soil Moisture Percentage";
+// 
+// 					var series = chart.series.push(new am4charts.LineSeries());
+// 					series.dataFields.dateX = "date";
+// 					series.dataFields.valueY = "moisture";
+// 					series.tooltipText = "Moisture: [bold]{valueY}[/]";
+// 					series.fillOpacity = 0.3;
+// 
+// 					chart.cursor = new am4charts.XYCursor();
+// 					chart.cursor.lineY.opacity = 0;
+// 					chart.scrollbarX = new am4charts.XYChartScrollbar();
+// 					chart.scrollbarX.series.push(series);
+// 
+// 					chart.events.on("datavalidated", function () {
+// 						dateAxis.zoom({start:0.8, end:1});
+// 					});
+// 				});
 			  }
 			</script>
 
