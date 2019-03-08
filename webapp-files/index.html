@@ -34,7 +34,7 @@
 								<li><a href="#intro">Setup</a></li>
 								<li><a href="#mode_one">Predict</a></li>
 								<li><a href="#contact">About</a></li>
-								<li><a href="#elements">Elements</a></li>
+<!-- 								<li><a href="#elements">Elements</a></li> -->
 							</ul>
 						</nav>
 					</header>
@@ -62,9 +62,10 @@
 									<div class="image column">
 										<img src="images/image3.jpg" alt="" style="width:100%" id="image3">
 									</div>
+								</div>
 									<p>The hardware components listed above were set up at a local address in Goleta, CA, USA. The images above show how the completed set up looked. These sensors were used to collect data on local humidity, local temperature, and local soil moisture levels for this specific plant. Using our own hardware allowed us to ensure the integrity of the data that we went on to use for analysis. Using the ESP8266, we were able to send the measurements that the sensors collected to an IoT hub in Azure, and reroute the data into Azure Storage (described further in software setup). Hardware programming code can be found at the github link: <a href="https://github.com/sayalirkakade/soil-sensor-293s" class="icon fa-github"></a> </p>
 								<h3 class="major">Software Setup</h3>
-								<p> Our software setup can be described as the various tasks that we needed to handle, and the tools we used, as well as an overview of the data collection and processing pipeline.</p>
+								<p> Our software setup can be described as the various tasks that we needed to handle and the tools we used to approach these tasks. All of our code can be found here: <a href="https://github.com/sayalirkakade/soil-sensor-293s" class="icon fa-github"></a> </p>
 									<div class="table-wrapper">
 										<table>
 											<thead>
@@ -97,10 +98,14 @@
 											</tbody>
 										</table>
 									</div>
-									<p> The following image shows the pipeline of data. </p>
-									
 								<h3 class="major">Dashboard Usage</h3>
-								<p> The <a href="#mode_one"">dashboard</a> has two main features. At the top of the dashboard, </p>
+								<p>The <a href="#mode_one"">dashboard</a> (as shown in the images) has two main features. At the top of the dashboard, the first graph shows the current soil moisture readings and the predicted soil moisture (based on that reading and the weather forecast from Dark Sky API) for the next 24 hours: </p> 
+								<span class="image main"><figure><img src="images/dashboard1.jpg" alt="" /><figcaption><b>[Image 1] Dashboard: Current Predictions</b></figcaption></figure></span>
+								<p>This graph is specific to the hardware setup that we have in Goleta, CA as described above and the Dark Sky API request data which is also specific to Goleta, CA. At the bottom of the dashboard, another feature helps users maintain healthy soil moisture levels for their specific plant. Users can fill out the form provided to indicate when they plan on watering their plant and how much water they will give: </p>
+								<span class="image main"><figure><img src="images/dashboard2.jpg" alt="" /><figcaption><b>[Image 2] Dashboard: Recommendation Form</b></figcaption></figure></span>
+								<p>Upon submitting the form, a second graph and a watering recommendation will be displayed: </p>
+								<span class="image main"><figure><img src="images/dashboard3.jpg" alt="" /><figcaption><b>[Image 3] Dashboard: Recommendation Prediction Output</b></figcaption></figure></span>
+								<p>The watering recommendation is based on the type of plant that the user indicates in the form, since different plants have different ideal soil moisture ranges. The recommendation will either tell users to water their plant less (soil moisture levels too high), that the conditions stay within the ideal range throughout the next 24 hours, or will tell a user how much water to give their plant and at what time. The time is based on when the soil moisture level is predicted to go below the ideal range, and the amount of water is based on the pot size that the user provides, with the assumption that the pot is 4/5 full of soil. For a more detailed explanation of the data analysis leading to specific predictions, take a look at our presentation slides on the github repo: <a href="https://github.com/sayalirkakade/soil-sensor-293s" class="icon fa-github"></a></p>
 							</article>
 
 						<!-- Prediction Mode One -->
@@ -153,6 +158,7 @@
 									</ul>
 								</form>
 								<div id="prescriptiveText" style="display: none">
+									<h4 class="major"> Watering Recommendation </h4>
 									<p>Your soil moisture level is in the ideal moisture level range.</p>
 								</div>
 								<div id="predictionchartdiv" style="display: none">
