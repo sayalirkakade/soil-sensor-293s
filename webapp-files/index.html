@@ -34,7 +34,7 @@
 								<li><a href="#intro">Setup</a></li>
 								<li><a href="#mode_one">Predict</a></li>
 								<li><a href="#contact">About</a></li>
-<!-- 								<li><a href="#elements">Elements</a></li> -->
+								<li><a href="#elements">Elements</a></li>
 							</ul>
 						</nav>
 					</header>
@@ -44,15 +44,63 @@
 
 						<!-- Intro -->
 							<article id="intro">
-								<h2 class="major">Project Setup</h2>
-								<p>Setting up the soil sensor project consisted of three main parts: the hardware setup involving the local sensors, the software setup to collect weather forecast and local sensor data, and finally the analysis of the data </p>
-								<span class="image main"><img src="images/pic01.jpg" alt="" /></span>
-								<p>Aenean ornare velit lacus, ac varius enim ullamcorper eu. Proin aliquam facilisis ante interdum congue. Integer mollis, nisl amet convallis, porttitor magna ullamcorper, amet egestas mauris. Ut magna finibus nisi nec lacinia. Nam maximus erat id euismod egestas. By the way, check out my <a href="#mode_one">awesome work</a>.</p>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis dapibus rutrum facilisis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam tristique libero eu nibh porttitor fermentum. Nullam venenatis erat id vehicula viverra. Nunc ultrices eros ut ultricies condimentum. Mauris risus lacus, blandit sit amet venenatis non, bibendum vitae dolor. Nunc lorem mauris, fringilla in aliquam at, euismod in lectus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. In non lorem sit amet elit placerat maximus. Pellentesque aliquam maximus risus, vel sed vehicula.</p>
+								<h2 class="major">Project Setup <a href="https://github.com/sayalirkakade/soil-sensor-293s" class="icon fa-github"></a> </h2>
+								<p>Setting up the soil sensor project consisted of three main parts: the hardware setup involving the local sensors, the software setup to collect and analyze weather forecast/local sensor data, and creation of this dashboard UI to help visualize trends and draw conclusions. All of our code and presentation slides can be found in the github repo	by clicking <a href="https://github.com/sayalirkakade/soil-sensor-293s"> here </a> or by clicking the github icons throughout this article.</p>
 								<h3 class="major">Hardware Setup</h3>
+								<ul class="alt">
+										<li>Microcontroller: Adafruit Feather HUZZAH with ESP8266</li>
+										<li>Sensors: Adafruit DHT22 (temperature and humidity), Clyewet CYT1033 (soil moisture)</li>
+										<li>Other Components: LP2950-N voltage regulator, resistors for level shifting</li>
+									</ul>
+								<div class="image row">
+  									<div class="image column">
+    									<img src="images/image1.jpg" alt="" style="width:100%" id="image1">
+  									</div>
+									<div class="image column">
+										<img src="images/image2.jpg" alt="" style="width:100%" id="image2">
+									</div>
+									<div class="image column">
+										<img src="images/image3.jpg" alt="" style="width:100%" id="image3">
+									</div>
+									<p>The hardware components listed above were set up at a local address in Goleta, CA, USA. The images above show how the completed set up looked. These sensors were used to collect data on local humidity, local temperature, and local soil moisture levels for this specific plant. Using our own hardware allowed us to ensure the integrity of the data that we went on to use for analysis. Using the ESP8266, we were able to send the measurements that the sensors collected to an IoT hub in Azure, and reroute the data into Azure Storage (described further in software setup). Hardware programming code can be found at the github link: <a href="https://github.com/sayalirkakade/soil-sensor-293s" class="icon fa-github"></a> </p>
 								<h3 class="major">Software Setup</h3>
-								<h3 class="major">Usage</h3>
-								<!-- LINK TO THE GITHUB WITH PRESENTATION HERE -->
+								<p> Our software setup can be described as the various tasks that we needed to handle, and the tools we used, as well as an overview of the data collection and processing pipeline.</p>
+									<div class="table-wrapper">
+										<table>
+											<thead>
+												<tr>
+													<th>Task</th>
+													<th>Tools</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Program ESP8266 to collect sensor data and upload to Azure.</td>
+													<td>Arduino IDE</td>
+												</tr>
+												<tr>
+													<td>Redirect messages incoming from ESP8266 to IoT Hub in Azure to Azure Storage Blob.</td>
+													<td>Azure GUI</td>
+												</tr>
+												<tr>
+													<td>Parse Azure blobs to extract local sensor data, combine with Dark Sky API data and store in Azure table.</td>
+													<td>Python Libraries: Azure Storage, Dark Sky API; Linux crontab (for automation)</td>
+												</tr>
+												<tr>
+													<td>Clean data and run analytics. Store predictions and ML model.</td>
+													<td>Python Libraries: Numpy, Pandas, Scikit-Learn; Linux crontab (for automation)</td>
+												</tr>
+												<tr>
+													<td>Develop dashboard to display predictions and insights on soil moisture levels.</td>
+													<td>amCharts Graphs</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<p> The following image shows the pipeline of data. </p>
+									
+								<h3 class="major">Dashboard Usage</h3>
+								<p> The <a href="#mode_one"">dashboard</a> has two main features. At the top of the dashboard, </p>
 							</article>
 
 						<!-- Prediction Mode One -->
