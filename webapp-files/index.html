@@ -148,7 +148,7 @@
 										</div>
 										<div class="field half">
 											<label for="timeDay">Time of Day</label>
-											<input type="time" name="timeDay" id="timeDay" step="1" />
+											<input type="time" name="timeDay" id="timeDay" step="3600" />
 											</select>
 										</div>
 									</div>
@@ -159,7 +159,7 @@
 								</form>
 								<div id="prescriptiveText" style="display: none">
 									<h4 class="major"> Watering Recommendation </h4>
-									<p>Your soil moisture level is in the ideal moisture level range.</p>
+									<p id="prescriptiveSuggestion"></p>
 								</div>
 								<div id="predictionchartdiv" style="display: none">
 								</div>
@@ -466,15 +466,6 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 
 			<script>
 
-				var now = new Date();
-				var timeNow = now.getHours();
-				var timeLater = timeNow - 1;
-				if (timeNow < 10) {
-					timeNow = '0' + timeNow;
-				}
-				timeNow = timeNow + ':00';
-				document.getElementById("timeDay").setAttribute("min", timeNow);
-
 				// Themes begin
 				am4core.useTheme(am4themes_animated);
 				// Themes end
@@ -487,15 +478,17 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 				var tableUri = 'https://soilhumiditydata293s.table.core.windows.net';
 				var tableService = AzureStorage.Table.createTableServiceWithSas(tableUri, '?sv=2018-03-28&ss=bfqt&srt=sco&sp=rwdlacup&se=2019-04-02T00:46:15Z&st=2019-03-06T17:46:15Z&spr=https&sig=%2BO%2BdmclRL08EjYWTw29lzwq4VRY5A0G5u1%2FajYXJ64c%3D');
 				
-				var chartData = [];
+				chartData = [];
 				var tableQuery = new AzureStorage.Table.TableQuery().top(200);
 				tableService.queryEntities('predictedSoilMoistureMessages', tableQuery, null, function (error, results) {
 					if (!error) {
 						for (var i = 0, entity; entity = results.entries[i]; i++) {
 							var date = new Date(entity.PartitionKey._);
+							date.setHours(date.getHours() - 8);
+							var moisture = parseInt(entity.soilmoistureprediction._/6.5);
 							chartData.push({
 								date: date,
-								moisture: parseInt((entity.soilmoistureprediction._/6.5))
+								moisture: moisture
 							});
 						}
 					}
@@ -531,26 +524,54 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 						dateAxis.zoom({start:0.8, end:1});
 					});
 				});
-				
+
+				function idealPlantMoisture(plant) {
+					
+				  	return [plantMin, plantMax];
+				}
 
 				function myFunction(formdata) {
-				  	document.getElementById("predictionchartdiv").style.display = "block";
-				  	document.getElementById("prescriptiveText").style.display = "block";
-				  	var potHeight = formdata.elements[0].value;
-				  	var potDia = formdata.elements[1].value;
-				  	var potBaseDia = formdata.elements[2].value;
-				  	var plant = formdata.elements[3].value;
-				  	var water = formdata.elements[4].value;
-				  	var timeOfDay = formdata.elements[5].value;
-				  	
-
-				  	// console.log(potHeight);
-				  	// console.log(potDia);
-				  	// console.log(potBaseDia);
-				  	// console.log(plant);
-				  	// console.log(water);
-				  	// console.log(timeOfDay);
-
+					document.getElementById("predictionchartdiv").style.display = "block";
+					document.getElementById("prescriptiveText").style.display = "block";
+					var potHeight = formdata.elements[0].value;
+					var potDia = formdata.elements[1].value;
+					var potBaseDia = formdata.elements[2].value;
+					var plant = formdata.elements[3].value;
+					var water = formdata.elements[4].value;
+					var timeOfDay = formdata.elements[5].value;
+					var dryFlag = 0;
+					var dryTime = 0;
+					var moistureAdded = 0;
+					var cups = 0;
+					var prescriptiveText = "";
+					var plantMax = 0;
+				  	var plantMin = 0;
+				  	if (plant == "cactus" || plant == "treeShrub") {
+				  		plantMin = 21;
+				  		plantMax = 40;
+				  	} else if (plant == "succulent") {
+				  		plantMin = 41;
+				  		plantMax = 60;
+				  	} else if (plant == "flowers" || plant == "fruit") {
+				  		plantMin = 21;
+				  		plantMax = 60;
+				  	} else if (plant == "vegetable") {
+				  		plantMin = 41;
+				  		plantMax = 80;
+				  	}
+				  	if (timeOfDay[0] != 0) {
+				  		var hoursOfDay = timeOfDay[0] + timeOfDay[1];
+				  	} else {
+				  		var hoursOfDay = timeOfDay[1];
+				  	}
+				  	for (i = 0; i < 25; i ++) {
+				  		var chartDate = window.chartData[i].date;
+					  	if (window.chartData[i].moisture <= plantMin && dryFlag == 0) {
+							dryTime = chartDate.getHours();
+							dryFlag = 1;
+							moistureAdded = ((plantMin + plantMax) * 0.75) - window.chartData[i].moisture;
+						}
+					}
 				  	// Themes begin
 				  	am4core.useTheme(am4themes_animated);
 					// Themes end
@@ -563,23 +584,44 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 					var tableUri = 'https://soilhumiditydata293s.table.core.windows.net';
 					var tableService = AzureStorage.Table.createTableServiceWithSas(tableUri, '?sv=2018-03-28&ss=bfqt&srt=sco&sp=rwdlacup&se=2019-04-02T00:46:15Z&st=2019-03-06T17:46:15Z&spr=https&sig=%2BO%2BdmclRL08EjYWTw29lzwq4VRY5A0G5u1%2FajYXJ64c%3D');
 					
+					var flag = 0;
 					var chartData = [];
 					var tableQuery = new AzureStorage.Table.TableQuery().top(200);
 					tableService.queryEntities('predictedSoilMoistureMessages', tableQuery, null, function (error, results) {
 						if (!error) {
 							for (var i = 0, entity; entity = results.entries[i]; i++) {
 								var date = new Date(entity.PartitionKey._);
+								date.setHours(date.getHours() - 8);
 								var moisture = parseInt(entity.soilmoistureprediction._/6.5);
-								console.log(moisture);
-								moisture = moisture + (15 * water * 236.588) / (Math.PI * potHeight * (Math.pow(potDia, 2) + Math.pow(potBaseDia, 2) + (potDia * potBaseDia)));
-								moisture = parseInt(moisture);
-								console.log(moisture);
+								if (date.getHours() == hoursOfDay || flag == 1) {
+									flag = 1;
+									moisture = moisture + (60 * water * 236.588) / (Math.PI * potHeight * (Math.pow(potDia, 2) + Math.pow(potBaseDia, 2) + (potDia * potBaseDia)));
+									moisture = parseInt(moisture);
+								}
  								chartData.push({
 									date: date,
 									moisture: moisture
 								});
 							}
 						}
+						if (dryFlag == 1) {
+							if (dryTime > 12) {
+								ampm = "PM";
+								dryTime = dryTime % 12;
+							} else if (dryTime >= 0) {
+								ampm = "AM";
+							}
+	 						cups = parseInt((moistureAdded * Math.PI * potHeight * (Math.pow(potDia, 2) + Math.pow(potBaseDia, 2) + (potDia * potBaseDia))) / (60 * 236.588));
+	 						if (cups == 1) {
+	 							var plural = " cup ";
+	 						} else {
+	 							var plural = " cups ";
+	 						}
+							prescriptiveText += "Add " + cups + plural + "of water at " + dryTime + " " + ampm + " to maintain ideal soil moisture level.";
+						} else {
+							prescriptiveText = "Your plant is at or above your ideal moisture level.";
+						}
+						document.getElementById("prescriptiveSuggestion").innerHTML = prescriptiveText;
 						chart.data = chartData;
 						var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
 						dateAxis.baseInterval = {
@@ -612,7 +654,7 @@ print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
 							dateAxis.zoom({start:0.8, end:1});
 						});
 					});
-			  }
+			  	}
 			</script>
 
 	</body>
