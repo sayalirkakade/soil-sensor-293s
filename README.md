@@ -1,6 +1,5 @@
 # SoilSmart - Final Project
-CMPSC 293S - Winter 2019
-Himangshu Chowdhury, Sayali Kakade, Aditya Wadaskar
+CMPSC 293S - Winter 2019 | Himangshu Chowdhury, Sayali Kakade, Aditya Wadaskar
 
 ## Project Description
 
